@@ -71,7 +71,3 @@ python run.py gen
 
 # Step 3: Run tests with provided test suites
 python run.py test CodeGenSuite
-
-
-
-
