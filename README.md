@@ -6,7 +6,7 @@
 
 ## 🗂️ Project Folder Structure
 
-<pre>``` Folder PATH listing for volume DATA
+<pre> Folder PATH listing for volume DATA
 Volume serial number is 7E6E-9FD8
 D:.
 +---.vscode
@@ -37,7 +37,7 @@ D:.
 |       +---testcases
 |       \---__pycache__
 \---target
- ```</pre>
+ </pre>
 
 ---
 
