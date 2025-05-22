@@ -64,7 +64,7 @@ array_literal: array_type LBRACE list_element RBRACE;
 list_element: array_element CM list_element | array_element;
 array_element: one_element | multi_element;
 one_element: type_var_arr CM one_element | type_var_arr;
-multi_element: LBRACE array_element RBRACE CM multi_element | LBRACE array_element RBRACE;
+multi_element: LBRACE array_element CM multi_element RBRACE | LBRACE array_element RBRACE;
 type_var_arr: literal | ID | struct_literal;
 
 
@@ -77,24 +77,23 @@ struct_element: ID COLON expr;
 
 //---------------- TYPE DECLARATION ----------------// DONE
 
-type_declaration: struct_type | interface_type;
+type_declaration: struct_type | interface_type; 
 
 
 //---------------- ARRAY TYPE ----------------// DONE
 
 array_type: dimension_list var_type; 
-dimension_list: dimension | multi_dimension;
+dimension_list: dimension dimension_list | dimension;
 dimension: LBRACKET INT_LIT RBRACKET | LBRACKET ID RBRACKET;
-multi_dimension: dimension multi_dimension | dimension;
 
 
 //------------------- STRUCT TYPE -------------------// DONE
 
-struct_type: TYPE ID STRUCT struct_fields sm_nl;
+struct_type: TYPE ID STRUCT struct_fields sm_nl; 
 struct_fields: LBRACE field_list RBRACE ; 
-//nullable_field_list: field_list | ;
-field_list: field field_list | field;
-field: ID var_type sm_nl;
+//nullable_field_list: field_list | ; //cmt
+field_list: field field_list | field; 
+field: ID var_type sm_nl; 
 
 
 //------------------- INTERFACE TYPE -------------------// DONE
@@ -118,14 +117,14 @@ idlist: ID CM idlist | ID;
 
 //------------------- VARIABLE DECLARATION -------------------// DONE
 
-// var_decl_list: var_decl var_decl_list | var_decl;
+var_decl_list: var_decl var_decl_list | var_decl;
 var_decl: VAR ID var_decl_body;
 var_decl_body: var_type | ASSIGN_INIT expr | var_type ASSIGN_INIT expr;
 
 
 //------------------- CONST DECLARATION -------------------// DONE
 
-// const_decl_list: const_decl const_decl_list | const_decl;
+const_decl_list: const_decl const_decl_list | const_decl;
 const_decl: CONST ID ASSIGN_INIT expr; // because literal already in expr
 
 
@@ -135,7 +134,7 @@ funcdecl: func_decl | method_decl;
 func_decl: FUNC ID LPAREN nullable_param_list RPAREN optional_return_type LBRACE block_list RBRACE sm_nl; 
 block_list: block_code_prime | ;
 block_code_prime: stmt block_code_prime | stmt;
-//block_code: stmt | var_decl | const_decl;
+//block_code: stmt | var_decl | const_decl; //cmt
 
 
 //------------------- METHOD DECLARATION -------------------// DONE
@@ -155,7 +154,7 @@ expr2: expr2 relational_ops expr3 | expr3;
 expr3: expr3 ADD expr4 | expr3 SUB expr4 | expr4;
 expr4: expr4 MUL expr5 | expr4 DIV expr5 | expr4 MOD expr5 | expr5;
 expr5: NOT expr5 | SUB expr5 | expr6;
-expr6: expr6 LBRACKET expr RBRACKET | expr6 DOT ID (LPAREN expr_list? RPAREN)? | operand;
+expr6: expr6 LBRACKET expr RBRACKET | expr6 DOT ID (LPAREN nullable_expr RPAREN)? | operand;
 operand: literal | LPAREN expr RPAREN | ID | func_call | struct_literal | array_literal;
 relational_ops: STR_EQ | NOT_EQUAL | LT | LE | GT | GE;
 
@@ -166,7 +165,7 @@ struct_access: DOT ID;
 
 stmt_list: stmt stmt_list | stmt;
 stmt: stmt_type sm_nl;
-stmt_type: const_decl | var_decl |assign_stmt | if_stmt | for_stmt | break_stmt | cont_stmt | call_stmt | return_stmt;
+stmt_type: const_decl | var_decl | assign_stmt | if_stmt | for_stmt | break_stmt | cont_stmt | call_stmt | return_stmt;
 
 
 // Assignment statement
@@ -186,9 +185,10 @@ else_stmt: ELSE LBRACE block_list RBRACE;
 for_stmt: for_normal_form  | for_loop_form  | for_array_form ; 
 for_normal_form: FOR expr LBRACE (stmt_list | ) RBRACE ;
 for_loop_form: FOR initial_expr sm_nl expr sm_nl ID assign_ops scalar_var LBRACE block_list RBRACE ;
-for_array_form: FOR (INT_LIT | '_' | ID) CM scalar_var ASSIGN_ASSIGNMENT RANGE (ID | INT_LIT | ID dimension_list | struct_literal) LBRACE block_list RBRACE ;
-scalar_var: ID | INT_LIT | FLOAT_LIT | STRING_LIT | TRUE | FALSE;
-
+for_array_form: FOR (INT_LIT | ID) CM scalar_var_sec ASSIGN_ASSIGNMENT RANGE expr LBRACE block_list RBRACE ;
+scalar_var: ID | INT_LIT | FLOAT_LIT | STRING_LIT | TRUE | FALSE | expr;
+scalar_var_sec: ID | INT_LIT | FLOAT_LIT | STRING_LIT | TRUE | FALSE;
+//(ID | INT_LIT | ID dimension_list | struct_literal) //cmt
 initial_expr: ID assign_ops scalar_var | var_decl_for;
 var_decl_for: VAR ID ASSIGN_INIT expr | VAR ID var_type ASSIGN_INIT expr;
 condition_block: LPAREN expr RPAREN; 
@@ -201,7 +201,7 @@ cont_stmt: CONTINUE;
 
 // Call statement
 call_stmt: func_call | method_call;
-func_call: assign_lhs LPAREN nullable_expr RPAREN;
+func_call: ID LPAREN nullable_expr RPAREN;
 nullable_expr: expr_list | ;
 method_call: assign_lhs DOT func_call;
 
