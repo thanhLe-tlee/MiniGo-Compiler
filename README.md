@@ -71,3 +71,11 @@ python run.py gen
 
 # Step 3: Run tests with provided test suites
 python run.py test CodeGenSuite
+
+---
+
+## ⚠️ Limitations
+
+- Although the project successfully implements most core components of a compiler, **some test cases may still produce errors** during parsing or intermediate code generation.
+- However, **approximately 95% of the test cases pass successfully**, indicating that the compiler is relatively stable and functional for an academic-level project.
+- These shortcomings are expected when building a compiler from scratch and provide valuable opportunities for future improvements and optimization.
